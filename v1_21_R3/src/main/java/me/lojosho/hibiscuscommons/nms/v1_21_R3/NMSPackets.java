@@ -478,7 +478,7 @@ public class NMSPackets extends NMSCommon implements me.lojosho.hibiscuscommons.
         MinecraftServer.getServer().getAdvancements().tree().addAll(Set.of(advancementHolder));
         progress.getRemainingCriteria().forEach(criteria -> nmsPlayer.getAdvancements().award(advancementHolder, criteria));
 
-        Bukkit.getScheduler().runTaskLater(HibiscusCommonsPlugin.getInstance(), () -> {
+        HibiscusCommonsPlugin.getInstance().getScheduler().runAtEntityLater(player, () -> {
             progress.getRemainingCriteria().forEach(criteria -> nmsPlayer.getAdvancements().revoke(advancementHolder, criteria));
             MinecraftServer.getServer().getAdvancements().tree().remove(Set.of(key));
 
@@ -564,3 +564,4 @@ public class NMSPackets extends NMSCommon implements me.lojosho.hibiscuscommons.
         for (Player p : sendTo) sendPacket(p, bundlePacket);
     }
 }
+

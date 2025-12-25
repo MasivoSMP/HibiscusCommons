@@ -7,6 +7,8 @@ import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.component.DyedItemColor;
+import me.lojosho.hibiscuscommons.HibiscusCommonsPlugin;
+import me.lojosho.hibiscuscommons.util.EntityIdRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -31,6 +33,11 @@ public class NMSUtils extends NMSCommon implements me.lojosho.hibiscuscommons.nm
 
     @Override
     public org.bukkit.entity.Entity getEntity(int entityId) {
+        if (HibiscusCommonsPlugin.isOnFolia()) {
+            var uuid = EntityIdRegistry.getUuid(entityId);
+            if (uuid == null) return null;
+            return Bukkit.getPlayer(uuid);
+        }
         net.minecraft.world.entity.Entity entity = getNMSEntity(entityId);
         if (entity == null) return null;
         return entity.getBukkitEntity();
@@ -84,3 +91,4 @@ public class NMSUtils extends NMSCommon implements me.lojosho.hibiscuscommons.nm
         }
     }
 }
+

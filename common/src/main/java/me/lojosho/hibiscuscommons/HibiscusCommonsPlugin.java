@@ -4,7 +4,9 @@ import lombok.Getter;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.listener.PlayerConnectionEvent;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
+import me.lojosho.hibiscuscommons.util.EntityIdRegistry;
 import me.lojosho.hibiscuscommons.util.ServerUtils;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 
 public final class HibiscusCommonsPlugin extends HibiscusPlugin {
@@ -44,6 +46,9 @@ public final class HibiscusCommonsPlugin extends HibiscusPlugin {
         }
 
         getServer().getPluginManager().registerEvents(new PlayerConnectionEvent(), this);
+        for (Player player : getServer().getOnlinePlayers()) {
+            player.getScheduler().run(this, task -> EntityIdRegistry.updatePlayer(player), null);
+        }
 
         // Plugin startup logic
         Hooks.setup();

@@ -193,6 +193,7 @@ bukkit {
     load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
     main = "me.lojosho.hibiscuscommons.HibiscusCommonsPlugin"
     apiVersion = "1.20"
+    foliaSupported = true
     authors = listOf("LoJoSho")
     softDepend = listOf(
         "ModelEngine",

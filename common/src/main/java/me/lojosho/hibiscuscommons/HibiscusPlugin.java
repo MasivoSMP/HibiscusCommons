@@ -7,6 +7,7 @@ import lombok.Setter;
 import me.lojosho.hibiscuscommons.packets.DefaultPacketInterface;
 import me.lojosho.hibiscuscommons.packets.PacketInterface;
 import me.lojosho.hibiscuscommons.plugins.SubPlugins;
+import me.lojosho.hibiscuscommons.scheduler.HibiscusScheduler;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -26,6 +27,8 @@ public abstract class HibiscusPlugin extends JavaPlugin {
     private boolean disabled = false;
     @Getter @Setter
     private PacketInterface packetInterface = new DefaultPacketInterface();
+    @Getter
+    private final HibiscusScheduler scheduler = new HibiscusScheduler(this);
 
     protected HibiscusPlugin() {
         this(-1);
