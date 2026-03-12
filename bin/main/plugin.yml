@@ -1,0 +1,30 @@
+name: HibiscusCommons
+version: 0.8.3-dd545ed
+main: me.lojosho.hibiscuscommons.HibiscusCommonsPlugin
+load: POSTWORLD
+authors:
+  - LoJoSho
+libraries:
+  - org.apache.commons:commons-lang3:3.17.0
+api-version: "1.20"
+softdepend:
+  - ModelEngine
+  - Oraxen
+  - ItemsAdder
+  - Geary
+  - HMCColor
+  - WorldGuard
+  - MythicMobs
+  - PlaceholderAPI
+  - SuperVanish
+  - PremiumVanish
+  - LibsDisguises
+  - Denizen
+  - MMOItems
+  - Eco
+  - Nexo
+  - CraftEngine
+  - GSit
+loadbefore:
+  - Cosmin
+folia-supported: true
