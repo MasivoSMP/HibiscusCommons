@@ -85,6 +85,8 @@ public interface NMSPackets {
 
     void sendEntityScalePacket(int entityId, double scale, List<Player> sendTo);
 
+    void sendArmorStandHeadPosePacket(int entityId, float xDegrees, float yDegrees, float zDegrees, List<Player> sendTo);
+
     void sendItemDisplayMetadata(int entityId,
                                  Vector3f translation,
                                  Vector3f scale,

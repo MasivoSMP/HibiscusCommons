@@ -1,5 +1,5 @@
 name: HibiscusCommons
-version: 0.8.3-dd545ed
+version: 0.8.3-028e5ca
 main: me.lojosho.hibiscuscommons.HibiscusCommonsPlugin
 load: POSTWORLD
 authors:
@@ -18,7 +18,6 @@ softdepend:
   - PlaceholderAPI
   - SuperVanish
   - PremiumVanish
-  - LibsDisguises
   - Denizen
   - MMOItems
   - Eco

@@ -17,6 +17,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.core.Rotations;
 import net.minecraft.network.chat.RemoteChatSession;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
@@ -356,6 +357,19 @@ public class NMSPackets extends NMSCommon implements me.lojosho.hibiscuscommons.
         attribute.setBaseValue(scale);
 
         ClientboundUpdateAttributesPacket packet = new ClientboundUpdateAttributesPacket(entityId, List.of(attribute));
+        for (Player p : sendTo) sendPacket(p, packet);
+    }
+
+    @Override
+    public void sendArmorStandHeadPosePacket(int entityId, float xDegrees, float yDegrees, float zDegrees, List<Player> sendTo) {
+        ArmorStand armorStand = new ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, level);
+        armorStand.setId(entityId);
+        armorStand.setHeadPose(new Rotations(xDegrees, yDegrees, zDegrees));
+
+        List<SynchedEntityData.DataValue<?>> dataValues = armorStand.getEntityData().packDirty();
+        if (dataValues == null || dataValues.isEmpty()) return;
+
+        ClientboundSetEntityDataPacket packet = new ClientboundSetEntityDataPacket(entityId, dataValues);
         for (Player p : sendTo) sendPacket(p, packet);
     }
 

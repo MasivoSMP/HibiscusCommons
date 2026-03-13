@@ -43,9 +43,6 @@ allprojects {
         // md-5 Repo
         maven("https://repo.md-5.net/content/groups/public/")
 
-        //LibsDisguises
-        maven("https://mvn.lib.co.nz/public")
-
         // MMOItems
         maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
 
@@ -90,9 +87,6 @@ allprojects {
         compileOnly("net.Indyuce:MMOItems-API:6.9.4-SNAPSHOT")
         compileOnly("com.willfp:eco:6.74.5")
         compileOnly("me.clip:placeholderapi:2.11.6")
-        compileOnly("me.libraryaddict.disguises:libsdisguises:11.0.0") {
-            exclude("org.spigotmc", "spigot")
-        }
         compileOnly("com.github.Xiao-MoMi:Custom-Fishing:2.3.3")
         compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.2")
         compileOnly("org.joml:joml:1.10.8")
@@ -206,7 +200,6 @@ bukkit {
         "PlaceholderAPI",
         "SuperVanish",
         "PremiumVanish",
-        "LibsDisguises",
         "Denizen",
         "MMOItems",
         "Eco",
