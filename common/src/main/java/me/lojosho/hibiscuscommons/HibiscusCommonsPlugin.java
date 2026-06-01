@@ -6,6 +6,7 @@ import me.lojosho.hibiscuscommons.listener.PlayerConnectionEvent;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.EntityIdRegistry;
 import me.lojosho.hibiscuscommons.util.ServerUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -67,14 +68,16 @@ public final class HibiscusCommonsPlugin extends HibiscusPlugin {
     }
 
     /**
-     * Checks for the Folia classes. Use {@link HibiscusCommonsPlugin#isOnFolia()} for cached value.
+     * Checks for the Folia region scheduler method. Use {@link HibiscusCommonsPlugin#isOnFolia()} for cached value.
      * @return True if plugin is running on a server with Folia; False if not
      */
     @ApiStatus.Internal
     public boolean checkFolia() {
-        if (ServerUtils.hasClass("io.papermc.paper.threadedregions.RegionizedServer")) {
+        try {
+            Bukkit.class.getMethod("getRegionScheduler");
             return true;
+        } catch (NoSuchMethodException e) {
+            return false;
         }
-        return false;
     }
 }

@@ -48,13 +48,16 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setDisplayName(@NotNull String displayName) {
-        if (onPaper) itemMeta.displayName(AdventureUtils.MINI_MESSAGE.deserialize(displayName));
+        if (onPaper) setDisplayName(AdventureUtils.MINI_MESSAGE.deserialize(displayName));
         else itemMeta.setDisplayName(StringUtils.parseStringToString(displayName));
         return this;
     }
 
     public ItemBuilder setDisplayName(@NotNull Component displayName) {
-        if (onPaper) itemMeta.displayName(displayName);
+        if (onPaper) {
+            if (NMSHandlers.getVersion().isHigherOrEqual(MinecraftVersion.v1_21_4)) itemMeta.customName(displayName);
+            else itemMeta.displayName(displayName);
+        }
         return this;
     }
 
@@ -98,7 +101,12 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setQuantity(int number) {
+    public ItemBuilder lore(@NotNull List<Component> lore) {
+        itemMeta.lore(lore);
+        return this;
+    }
+
+    public ItemBuilder quantity(int number) {
         itemStack.setAmount(number);
         return this;
     }
@@ -152,6 +160,11 @@ public class ItemBuilder {
 
     public ItemBuilder setToolTip(@Nullable NamespacedKey key) {
         itemMeta.setTooltipStyle(key);
+        return this;
+    }
+
+    public ItemBuilder removeAllEnchantments() {
+        itemMeta.removeEnchantments();
         return this;
     }
 

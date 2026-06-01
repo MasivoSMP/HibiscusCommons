@@ -1,10 +1,12 @@
 # Project exclude paths
 /.gradle/
 /bin/
+/.gradle-home/
 /build/
 /common/bin/
 /common/build/
 /common/build/classes/java/main/
+/v*/bin/
 /v1_18_R2/build/
 /v1_19_R1/build/
 /v1_19_R2/build/
@@ -18,4 +20,5 @@
 /output/
 .gradle
 build
+.DS_Store
 /run/

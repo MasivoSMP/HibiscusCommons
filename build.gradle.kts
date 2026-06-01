@@ -3,28 +3,28 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 plugins {
     id("java")
     id("maven-publish")
-    id("com.gradleup.shadow") version "8.3.4"
+    id("com.gradleup.shadow") version "9.4.1"
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
-    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
     id("io.papermc.paperweight.userdev") apply false
     //id("io.papermc.hangar-publish-plugin") version "0.1.1"
 }
 
 group = "me.lojosho"
-version = "0.8.3${getGitCommitHash()}"
+version = "0.9.1${getGitCommitHash()}"
 
 allprojects {
     apply(plugin = "java")
     apply(plugin = "java-library")
 
     repositories {
+        // Paper Repo
+        maven("https://repo.papermc.io/repository/maven-public/")
+
         mavenCentral()
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
         maven("https://oss.sonatype.org/content/groups/public/")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
-
-        // Paper Repo
-        maven("https://repo.papermc.io/repository/maven-public/")
 
         // Nexo
         maven("https://repo.nexomc.com/snapshots/")
@@ -91,15 +91,15 @@ allprojects {
         compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.2")
         compileOnly("org.joml:joml:1.10.8")
         compileOnly("com.google.guava:guava:33.4.0-jre") // Sometimes just not included in compile time???
-        compileOnly("com.github.Gecolay.GSit:core:2.0.0")
-        compileOnly("net.momirealms:craft-engine-core:0.0.49")
-        compileOnly("net.momirealms:craft-engine-bukkit:0.0.49")
+        compileOnly("com.github.Gecolay.GSit:core:3.1.1")
+        compileOnly("net.momirealms:craft-engine-core:26.5")
+        compileOnly("net.momirealms:craft-engine-bukkit:26.5")
 
         // Lombok <3
-        annotationProcessor("org.projectlombok:lombok:1.18.36")
-        compileOnly("org.projectlombok:lombok:1.18.36")
-        testCompileOnly("org.projectlombok:lombok:1.18.36")
-        testAnnotationProcessor("org.projectlombok:lombok:1.18.36")
+        annotationProcessor("org.projectlombok:lombok:1.18.44")
+        compileOnly("org.projectlombok:lombok:1.18.44")
+        testCompileOnly("org.projectlombok:lombok:1.18.44")
+        testAnnotationProcessor("org.projectlombok:lombok:1.18.44")
 
         // Spigot Auto Loader Libraries
         compileOnly("org.apache.commons:commons-lang3:3.17.0")
@@ -117,12 +117,16 @@ allprojects {
 
 dependencies {
     implementation(project(path = ":common"))
-    implementation(project(path = ":v1_21_R1", configuration = "reobf"))
-    implementation(project(path = ":v1_21_R2", configuration = "reobf"))
-    implementation(project(path = ":v1_21_R3", configuration = "reobf"))
-    implementation(project(path = ":v1_21_R4", configuration = "reobf"))
-    implementation(project(path = ":v1_21_R5", configuration = "reobf"))
-    implementation(project(path = ":v1_21_R6", configuration = "reobf"))
+    implementation(project(path = ":v1_21_R3"))
+    implementation(project(path = ":v1_21_R4"))
+    implementation(project(path = ":v1_21_R5"))
+    implementation(project(path = ":v1_21_R6"))
+    implementation(project(path = ":v1_21_R7"))
+    implementation(project(path = ":v26_1_R1"))
+}
+
+java {
+    disableAutoTargetJvm()
 }
 
 tasks {
@@ -151,12 +155,12 @@ tasks {
     }
 
     shadowJar {
-        dependsOn(":v1_21_R1:reobfJar")
-        dependsOn(":v1_21_R2:reobfJar")
-        dependsOn(":v1_21_R3:reobfJar")
-        dependsOn(":v1_21_R4:reobfJar")
-        dependsOn(":v1_21_R5:reobfJar")
-        dependsOn(":v1_21_R6:reobfJar")
+        dependsOn(":v1_21_R3:build")
+        dependsOn(":v1_21_R4:build")
+        dependsOn(":v1_21_R5:build")
+        dependsOn(":v1_21_R6:build")
+        dependsOn(":v1_21_R7:build")
+        dependsOn(":v26_1_R1:build")
         mergeServiceFiles()
 
         relocate("org.bstats", "me.lojosho.shaded.bstats")
@@ -182,12 +186,11 @@ tasks {
 }
 
 // Handles generating the plugin yml
-
 bukkit {
     load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
     main = "me.lojosho.hibiscuscommons.HibiscusCommonsPlugin"
-    apiVersion = "1.20"
     foliaSupported = true
+    apiVersion = "1.21"
     authors = listOf("LoJoSho")
     softDepend = listOf(
         "ModelEngine",
@@ -211,38 +214,10 @@ bukkit {
     loadBefore = listOf(
         "Cosmin" // Fixes an issue with Cosmin loading before and taking /cosmetic, when messing with what we do.
     )
-
     libraries = listOf(
-        /*
-        "net.kyori:adventure-api:4.24.0",
-        "net.kyori:adventure-text-minimessage:4.24.0",
-        "net.kyori:adventure-text-serializer-gson:4.24.0",
-        "net.kyori:adventure-platform-bukkit:4.4.1",
-         */
         "org.apache.commons:commons-lang3:3.17.0"
-        //"org.spongepowered:configurate-yaml:4.2.0-SNAPSHOT" // Readd when 4.2.0 releases
     )
 }
-/*
-hangarPublish {
-    publications.register("plugin") {
-        version.set(project.version as String)
-        channel.set("Release")
-        if (project.version.toString().contains("-")) channel.set("Snapshot") // If its a dev build, it will have -dev on it
-        id.set("HibiscusCommons")
-        apiKey.set(System.getenv("HANGAR_API_TOKEN"))
-        platforms {
-            register(Platforms.PAPER) {
-                jar.set(tasks.jar.flatMap { it.archiveFile })
-
-                val versions: List<String> = listOf("1.18.2-1.20.4")
-                platformVersions.set(versions)
-            }
-        }
-    }
-}
-*/
-// Publishing stuff below here to a remote maven repo
 
 publishing {
     val publishData = PublishData(project)

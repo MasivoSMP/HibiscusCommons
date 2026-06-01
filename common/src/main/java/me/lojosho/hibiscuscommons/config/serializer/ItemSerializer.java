@@ -5,6 +5,7 @@ import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.nms.MinecraftVersion;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.*;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemFlag;
@@ -21,9 +22,8 @@ import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.lang.reflect.Type;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ItemSerializer implements TypeSerializer<ItemStack> {
 
@@ -33,11 +33,13 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
     private static final String NAME = "name";
     private static final String UNBREAKABLE = "unbreakable";
     private static final String GLOWING = "glowing";
+    private static final String LORE_APPEND = "lore-append";
     private static final String LORE = "lore";
     private static final String TOOLTIP_STYLE = "tooltip-style";
     private static final String MODEL_DATA = "model-data";
     private static final String MODEL_ID = "model-id";
     private static final String NBT_TAGS = "nbt-tag";
+    private static final String REMOVE_EXISTING_ENCHANTS = "remove-enchants";
     private static final String ENCHANTS = "enchants";
     private static final String ITEM_FLAGS = "item-flags";
     private static final String TEXTURE = "texture";
@@ -58,11 +60,13 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
         final ConfigurationNode nameNode = source.node(NAME);
         final ConfigurationNode unbreakableNode = source.node(UNBREAKABLE);
         final ConfigurationNode glowingNode = source.node(GLOWING);
+        final ConfigurationNode loreAppendNode = source.node(LORE_APPEND);
         final ConfigurationNode loreNode = source.node(LORE);
         final ConfigurationNode toolTipStyleNode = source.node(TOOLTIP_STYLE);
         final ConfigurationNode modelDataNode = source.node(MODEL_DATA);
         final ConfigurationNode modelIdNode = source.node(MODEL_ID);
         final ConfigurationNode nbtNode = source.node(NBT_TAGS);
+        final ConfigurationNode removeEnchantNode = source.node(REMOVE_EXISTING_ENCHANTS);
         final ConfigurationNode enchantsNode = source.node(ENCHANTS);
         final ConfigurationNode itemFlagsNode = source.node(ITEM_FLAGS);
         final ConfigurationNode textureNode = source.node(TEXTURE);
@@ -95,8 +99,34 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
         if (!glowingNode.virtual()) {
             itemBuilder.setGlowing(true);
         }
+        LoreAppendMode loreAppendMode = LoreAppendMode.OVERRIDE;
+        if (!loreAppendNode.virtual()) {
+            try {
+                loreAppendMode = LoreAppendMode.valueOf(loreAppendNode.getString().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                MessagesUtil.sendDebugMessages("Lore Append Mode is currently set to an invalid option! Defaulting to Override! See valid option here: " + Arrays.toString(LoreAppendMode.values()));
+                loreAppendMode = LoreAppendMode.OVERRIDE; // Set it back to override
+            }
+        }
         if (!loreNode.virtual()) {
-            itemBuilder.setLore(loreNode.getList(String.class, new ArrayList<>()));
+            final List<Component> existingLore = itemMeta.lore();
+            final List<Component> lore = loreNode.getList(String.class, new ArrayList<>()).stream().map(AdventureUtils.MINI_MESSAGE::deserialize).collect(Collectors.toList());
+            switch (loreAppendMode) {
+                case OVERRIDE -> {
+                    itemBuilder.lore(lore);
+                }
+                case APPEND_TOP -> {
+                    List<Component> newLore = new ArrayList<>(lore);
+                    if (existingLore != null) newLore.addAll(existingLore);
+                    itemBuilder.lore(newLore);
+                }
+                case APPEND_BOTTOM -> {
+                    List<Component> newLore = new ArrayList<>();
+                    if (existingLore != null) newLore.addAll(existingLore);
+                    newLore.addAll(lore);
+                    itemBuilder.lore(newLore);
+                }
+            }
         }
         if (!modelDataNode.virtual()) {
             itemBuilder.setCustomModelId(modelDataNode.getInt());
@@ -112,6 +142,11 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
             for (ConfigurationNode nbtNodes : nbtNode.childrenMap().values()) {
                 itemMeta.getPersistentDataContainer().set(NamespacedKey.minecraft(nbtNodes.key().toString()), PersistentDataType.STRING, nbtNodes.getString());
             }
+        }
+
+        if (!removeEnchantNode.virtual()) {
+            boolean shouldRemove = removeEnchantNode.getBoolean(false);
+            if (shouldRemove) itemBuilder.removeAllEnchantments();
         }
 
         if (!enchantsNode.virtual()) {
@@ -190,6 +225,12 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
     @Override
     public void serialize(final Type type, @Nullable final ItemStack obj, final ConfigurationNode node) throws SerializationException {
 
+    }
+
+    public enum LoreAppendMode {
+        OVERRIDE,
+        APPEND_TOP,
+        APPEND_BOTTOM
     }
 }
 
