@@ -1,6 +1,8 @@
 # Project exclude paths
 /.gradle/
+/bin/
 /build/
+/common/bin/
 /common/build/
 /common/build/classes/java/main/
 /v1_18_R2/build/
