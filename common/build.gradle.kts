@@ -17,5 +17,21 @@ tasks {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
+    compileOnly("io.canvasmc.pinac:pinac-api:26.2-local")
 }
+java {
+    disableAutoTargetJvm()
+    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+}
+
+val migrationCheckSources = sourceSets.create("migrationCheck") {
+    compileClasspath += sourceSets.main.get().output + sourceSets.main.get().compileClasspath
+    runtimeClasspath += compileClasspath
+}
+
+val migrationCheck by tasks.registering(JavaExec::class) {
+    classpath = migrationCheckSources.runtimeClasspath
+    mainClass.set("me.lojosho.hibiscuscommons.nms.MigrationCheck")
+    enableAssertions = true
+}
+tasks.check { dependsOn(migrationCheck) }

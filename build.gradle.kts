@@ -7,6 +7,7 @@ plugins {
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
     id("xyz.jpenilla.run-paper") version "3.0.2"
     id("io.papermc.paperweight.userdev") apply false
+    id("io.canvasmc.weaver.userdev") version "2.4.5" apply false
     //id("io.papermc.hangar-publish-plugin") version "0.1.1"
 }
 
@@ -18,6 +19,7 @@ allprojects {
     apply(plugin = "java-library")
 
     repositories {
+        mavenLocal { content { includeGroup("io.canvasmc.pinac") } }
         // Paper Repo
         maven("https://repo.papermc.io/repository/maven-public/")
 
@@ -123,6 +125,7 @@ dependencies {
     implementation(project(path = ":v1_21_R6"))
     implementation(project(path = ":v1_21_R7"))
     implementation(project(path = ":v26_1_R1"))
+    implementation(project(path = ":v26_2_R1"))
 }
 
 java {
@@ -161,6 +164,7 @@ tasks {
         dependsOn(":v1_21_R6:build")
         dependsOn(":v1_21_R7:build")
         dependsOn(":v26_1_R1:build")
+        dependsOn(":v26_2_R1:build")
         mergeServiceFiles()
 
         relocate("org.bstats", "me.lojosho.shaded.bstats")

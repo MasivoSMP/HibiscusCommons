@@ -21,6 +21,7 @@ public enum MinecraftVersion {
     v26_1,
     v26_1_1,
     v26_1_2,
+    v26_2,
     ;
 
     public boolean isHigher(MinecraftVersion other) {
